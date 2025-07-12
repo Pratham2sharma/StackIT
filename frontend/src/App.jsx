@@ -8,6 +8,7 @@ import AdminPanel from './pages/AdminPanel';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import useAuthStore from './store/authStore';
+import Profile from './pages/Profile';
 
 function App() {
   const { initAuth } = useAuthStore();
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/questions" element={<Questions />} />
         <Route path="/questions/:id" element={<QuestionDetail />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

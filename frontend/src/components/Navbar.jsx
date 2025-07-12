@@ -215,9 +215,9 @@ const Navbar = () => {
                       <div className="text-[#8E8E93] text-xs">{user.email}</div>
                     </div>
                     <hr className="border-none h-px bg-[#3A3A3C] m-0" />
-                    <button className="w-full px-4 py-3 bg-transparent border-none text-[#8E8E93] text-sm text-left cursor-pointer transition-all duration-200 hover:bg-[#2C2C2E] hover:text-white">Profile</button>
-                    <button className="w-full px-4 py-3 bg-transparent border-none text-[#8E8E93] text-sm text-left cursor-pointer transition-all duration-200 hover:bg-[#2C2C2E] hover:text-white">My Questions</button>
-                    <button className="w-full px-4 py-3 bg-transparent border-none text-[#8E8E93] text-sm text-left cursor-pointer transition-all duration-200 hover:bg-[#2C2C2E] hover:text-white">My Answers</button>
+                    <Link to="/profile" onClick={() => setShowUserMenu(false)} className="block w-full px-4 py-3 bg-transparent text-[#8E8E93] text-sm text-left cursor-pointer transition-all duration-200 hover:bg-[#2C2C2E] hover:text-white">
+                      Profile
+                    </Link>
                     <button className="w-full px-4 py-3 bg-transparent border-none text-[#FF6B35] text-sm text-left cursor-pointer transition-all duration-200 hover:bg-[#FF6B35]/10" onClick={handleLogout}>Logout</button>
                   </div>
                 )}
