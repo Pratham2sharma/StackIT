@@ -19,14 +19,14 @@ const userSchema = mongoose.Schema({
     minLength: [6, "Password must be at least 6 characters"]
   },
 
-  // 👇 Role-based access
+  // Role-based access
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
   },
 
-  // 👇 Ban support for admins
+  //  Ban support for admins
   isBanned: {
     type: Boolean,
     default: false

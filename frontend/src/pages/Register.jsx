@@ -99,7 +99,7 @@ const Register = () => {
 
           <div className="flex flex-col items-start mb-6">
             <label className="flex items-center text-[#8E8E93] text-sm cursor-pointer">
-              <input type="checkbox" required className="hidden" />
+              <input type="checkbox" required className="sr-only" />
               <span className="w-4 h-4 bg-[#2C2C2E] border border-[#3A3A3C] rounded mr-2 relative transition-all duration-300 flex-shrink-0 checked:bg-[#FF6B35] checked:border-[#FF6B35]"></span>
               I agree to the <a href="/terms" className="text-[#FF6B35] no-underline transition-colors duration-300 hover:text-[#F7931E]">Terms of Service</a>
             </label>
