@@ -98,7 +98,7 @@ Whether you're a student, developer, or lifelong learner, StackIT helps you find
 ## ⚡ Get Started
 
 1. **Clone this repo**  
-   `git clone https://github.com/your-org/stackit.git`
+   `git clone https://github.com/Pratham2sharma/StackIT.git`
 
 2. **Install dependencies**  
    `cd stackit && npm install`
