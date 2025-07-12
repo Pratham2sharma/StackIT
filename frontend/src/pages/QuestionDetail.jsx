@@ -21,7 +21,7 @@ const QuestionDetail = () => {
   const [newAnswer, setNewAnswer] = useState('')
   const [isLoaded, setIsLoaded] = useState(false)
   
-  const { getQuestionById, upvoteQuestion, downvoteQuestion, addAnswer } = useQuestionStore()
+  const { getQuestion, upvoteQuestion, downvoteQuestion, createAnswer } = useQuestionStore()
   const { user } = useAuthStore()
 
   // Mock question data
@@ -141,10 +141,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
-        const fetchedQuestion = await getQuestionById(id)
-        if (fetchedQuestion) {
-          setQuestion(fetchedQuestion)
-          setAnswers(fetchedQuestion.answers || [])
+        const result = await getQuestion(id)
+        if (result.success) {
+          setQuestion(result.data)
+          setAnswers(result.data.answers || [])
         } else {
           // Fallback to mock data if question not found
           setQuestion(mockQuestion)
@@ -160,7 +160,7 @@ export const AuthProvider = ({ children }) => {
     }
     
     fetchQuestion()
-  }, [id, getQuestionById])
+  }, [id, getQuestion])
 
   useEffect(() => {
     // Highlight code blocks after content loads
@@ -192,8 +192,8 @@ export const AuthProvider = ({ children }) => {
           await downvoteQuestion(targetId)
         }
         // Refresh question data
-        const updatedQuestion = await getQuestionById(id)
-        if (updatedQuestion) setQuestion(updatedQuestion)
+        const result = await getQuestion(id)
+        if (result.success) setQuestion(result.data)
       }
     } catch (error) {
       console.error('Error voting:', error)
@@ -208,13 +208,18 @@ export const AuthProvider = ({ children }) => {
     }
     
     try {
-      await addAnswer(id, newAnswer)
-      setNewAnswer('')
-      // Refresh question data to get updated answers
-      const updatedQuestion = await getQuestionById(id)
-      if (updatedQuestion) {
-        setQuestion(updatedQuestion)
-        setAnswers(updatedQuestion.answers || [])
+      const result = await createAnswer(id, newAnswer)
+      if (result.success) {
+        setNewAnswer('')
+        // Refresh question data to get updated answers
+        const updatedResult = await getQuestion(id)
+        if (updatedResult.success) {
+          setQuestion(updatedResult.data)
+          setAnswers(updatedResult.data.answers || [])
+        }
+        // Don't show alert, just refresh the page content
+      } else {
+        alert(result.error || 'Failed to submit answer')
       }
     } catch (error) {
       console.error('Error submitting answer:', error)
@@ -276,7 +281,9 @@ export const AuthProvider = ({ children }) => {
               </button>
               
               <span className="text-3xl font-bold text-white">
-                {(question.votes?.upvotes?.length || 0) - (question.votes?.downvotes?.length || 0)}
+                {typeof question.votes === 'object' && question.votes !== null 
+                  ? (question.votes.upvotes?.length || 0) - (question.votes.downvotes?.length || 0)
+                  : question.votes || 0}
               </span>
               
               <button 
@@ -335,7 +342,7 @@ export const AuthProvider = ({ children }) => {
             </h2>
 
             {answers.map((answer, index) => (
-              <div key={answer.id} className={`flex gap-6 mb-6 ${index !== answers.length - 1 ? 'border-b border-[#2C2C2E] pb-6' : ''}`}>
+              <div key={answer._id || answer.id || index} className={`flex gap-6 mb-6 ${index !== answers.length - 1 ? 'border-b border-[#2C2C2E] pb-6' : ''}`}>
                 {/* Vote Section */}
                 <div className="flex flex-col items-center gap-2 min-w-[60px]">
                   <button 
@@ -345,7 +352,11 @@ export const AuthProvider = ({ children }) => {
                     <ChevronUp className="w-8 h-8 text-[#8E8E93] group-hover:text-[#34C759]" />
                   </button>
                   
-                  <span className="text-2xl font-bold text-white">{answer.votes}</span>
+                  <span className="text-2xl font-bold text-white">
+                    {typeof answer.votes === 'object' && answer.votes !== null 
+                      ? (answer.votes.upvotes?.length || 0) - (answer.votes.downvotes?.length || 0)
+                      : answer.votes || 0}
+                  </span>
                   
                   <button 
                     onClick={() => handleVote('down', 'answer', answer.id)}
@@ -371,12 +382,16 @@ export const AuthProvider = ({ children }) => {
                   {/* Answer Author Info */}
                   <div className="flex justify-end">
                     <div className="bg-[#1C1C1E] rounded-lg p-3 text-sm">
-                      <div className="text-[#8E8E93] mb-1">answered {new Date(answer.createdAt).toLocaleDateString()}</div>
+                      <div className="text-[#8E8E93] mb-1">
+                        answered {answer.createdAt ? new Date(answer.createdAt).toLocaleDateString() : 'recently'}
+                      </div>
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-gradient-orange rounded-full flex items-center justify-center text-white font-semibold text-xs">
-                          {answer.authorAvatar}
+                          {answer.author?.name?.charAt(0).toUpperCase() || answer.authorAvatar || 'A'}
                         </div>
-                        <span className="text-[#007AFF] hover:underline cursor-pointer">{answer.author}</span>
+                        <span className="text-[#007AFF] hover:underline cursor-pointer">
+                          {answer.author?.name || answer.author || 'Anonymous'}
+                        </span>
                       </div>
                     </div>
                   </div>
