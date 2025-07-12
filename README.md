@@ -115,6 +115,4 @@ Whether you're a student, developer, or lifelong learner, StackIT helps you find
 We're proud to participate in the Odoo Hackathon — a place to create, collaborate, and showcase innovation.  
 **StackIT** is our attempt at building something meaningful, scalable, and community-first.
 
----
 
-> *"The best way to learn is together." – The StackIT Team 💡*
