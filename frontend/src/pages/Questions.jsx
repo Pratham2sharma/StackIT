@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Search, Filter, ArrowUpDown, ChevronUp, ChevronDown, Eye, MessageSquare, Check, Tags, Plus } from 'lucide-react'
 import useQuestionStore from '../store/questionStore'
 import useAuthStore from '../store/authStore'
@@ -16,74 +17,6 @@ const Questions = () => {
   const { questions, searchQuery, getQuestions, createQuestion, upvoteQuestion, downvoteQuestion, isLoading, error } = useQuestionStore()
   const { user } = useAuthStore()
 
-  const mockQuestions = [
-    {
-      id: 1,
-      title: "How to implement authentication in React?",
-      author: "john_dev",
-      votes: 15,
-      answers: 3,
-      views: 234,
-      tags: ["react", "authentication", "javascript"],
-      timeAgo: "2 hours ago",
-      hasAcceptedAnswer: true
-    },
-    {
-      id: 2,
-      title: "Best practices for database optimization?",
-      author: "db_expert",
-      votes: 8,
-      answers: 1,
-      views: 156,
-      tags: ["database", "optimization", "sql"],
-      timeAgo: "4 hours ago",
-      hasAcceptedAnswer: false
-    },
-    {
-      id: 3,
-      title: "CSS Grid vs Flexbox - When to use which?",
-      author: "css_ninja",
-      votes: 23,
-      answers: 5,
-      views: 445,
-      tags: ["css", "grid", "flexbox"],
-      timeAgo: "1 day ago",
-      hasAcceptedAnswer: true
-    },
-    {
-      id: 4,
-      title: "Node.js performance optimization tips?",
-      author: "backend_pro",
-      votes: 12,
-      answers: 2,
-      views: 189,
-      tags: ["nodejs", "performance", "optimization"],
-      timeAgo: "2 days ago",
-      hasAcceptedAnswer: false
-    },
-    {
-      id: 5,
-      title: "Understanding async/await in JavaScript",
-      author: "js_master",
-      votes: 31,
-      answers: 7,
-      views: 567,
-      tags: ["javascript", "async", "promises"],
-      timeAgo: "3 days ago",
-      hasAcceptedAnswer: true
-    },
-    {
-      id: 6,
-      title: "Docker containerization best practices",
-      author: "devops_guru",
-      votes: 19,
-      answers: 4,
-      views: 298,
-      tags: ["docker", "containerization", "devops"],
-      timeAgo: "4 days ago",
-      hasAcceptedAnswer: true
-    }
-  ]
 
   const allTags = ["react", "javascript", "css", "database", "sql", "authentication", "optimization", "grid", "flexbox", "nodejs", "performance", "async", "promises", "docker", "containerization", "devops"]
 
@@ -486,9 +419,12 @@ const Questions = () => {
                   >
                     <div className="space-y-3">
                       {/* Question Title */}
-                      <h3 className="text-[#007AFF] font-semibold text-base md:text-lg hover:underline transition-all leading-tight cursor-pointer">
+                      <Link 
+                        to={`/questions/${question._id || question.id}`}
+                        className="text-[#007AFF] font-semibold text-base md:text-lg hover:underline transition-all leading-tight cursor-pointer block"
+                      >
                         {question.title}
-                      </h3>
+                      </Link>
                       
                       {/* Description Preview */}
                       <p className="text-[#8E8E93] text-sm line-clamp-2">

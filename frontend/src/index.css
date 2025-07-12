@@ -79,3 +79,46 @@
 .animate-fade-in-up {
   animation: fade-in-up 0.6s ease-out forwards;
 }
+
+/* Code highlighting styles */
+pre[class*="language-"] {
+  background: #2d2d2d !important;
+  border: 1px solid #3A3A3C !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  margin: 16px 0 !important;
+  overflow-x: auto !important;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+code[class*="language-"] {
+  color: #f8f8f2 !important;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
+}
+
+.inline-code {
+  background-color: #2C2C2E !important;
+  color: #f8f8f2 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
+  font-size: 0.9em !important;
+  border: 1px solid #3A3A3C !important;
+}
+
+/* VS Code-like syntax highlighting colors */
+.token.comment { color: #6A9955 !important; }
+.token.keyword { color: #569CD6 !important; }
+.token.string { color: #CE9178 !important; }
+.token.number { color: #B5CEA8 !important; }
+.token.function { color: #DCDCAA !important; }
+.token.class-name { color: #4EC9B0 !important; }
+.token.operator { color: #D4D4D4 !important; }
+.token.punctuation { color: #D4D4D4 !important; }
+.token.property { color: #9CDCFE !important; }
+.token.variable { color: #9CDCFE !important; }
+.token.tag { color: #569CD6 !important; }
+.token.attr-name { color: #92C5F8 !important; }
+.token.attr-value { color: #CE9178 !important; }
