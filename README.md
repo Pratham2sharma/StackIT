@@ -85,7 +85,7 @@ Whether you're a student, developer, or lifelong learner, StackIT helps you find
     </td>
     <td align="center">
       <a href="https://github.com/P47Parzival">
-        <img src="https://avatars.githubusercontent.com/u/158600867?v=4" width="80"/><br/>
+        <img src="https://avatars.githubusercontent.com/u/109059409?v=4" width="80"/><br/>
         <b>Dhruv Mali</b>
       </a><br/>
       <a href="mailto:dhruvmali9039@gmail.com">dhruvmali9039@gmail.com</a>
