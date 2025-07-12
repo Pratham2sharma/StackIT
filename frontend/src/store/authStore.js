@@ -3,6 +3,64 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/auth';
 
+// Axios interceptor to handle token refresh
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(() => {
+          return axios(originalRequest);
+        }).catch(err => {
+          return Promise.reject(err);
+        });
+      }
+      
+      originalRequest._retry = true;
+      isRefreshing = true;
+      
+      try {
+        const response = await axios.post(`${API_URL}/refresh-token`);
+        if (response.data.accessToken) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.accessToken}`;
+          localStorage.setItem('token', response.data.accessToken);
+        }
+        processQueue(null);
+        return axios(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError);
+        // Logout user if refresh fails
+        localStorage.removeItem('token');
+        delete axios.defaults.headers.common['Authorization'];
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 const useAuthStore = create((set, get) => ({
   user: null,
   token: localStorage.getItem('token') || null,
@@ -17,6 +75,22 @@ const useAuthStore = create((set, get) => ({
     } else {
       delete axios.defaults.headers.common['Authorization'];
       localStorage.removeItem('token');
+    }
+  },
+
+  // Refresh token
+  refreshToken: async () => {
+    try {
+      const response = await axios.post(`${API_URL}/refresh-token`);
+      if (response.data.accessToken) {
+        set({ token: response.data.accessToken });
+        get().setAuthHeader(response.data.accessToken);
+      }
+      return { success: true };
+    } catch (error) {
+      // If refresh fails, logout user
+      get().logout();
+      return { success: false };
     }
   },
 
@@ -69,6 +143,10 @@ const useAuthStore = create((set, get) => ({
     const token = get().token;
     if (token) {
       get().setAuthHeader(token);
+      // Set up automatic token refresh every 20 hours
+      setInterval(() => {
+        get().refreshToken();
+      }, 20 * 60 * 60 * 1000); // 20 hours
     }
   },
 
