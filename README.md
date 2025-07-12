@@ -1,6 +1,10 @@
 # 🚀 StackIT – The Minimal Q&A Platform for Modern Learners  
 *A project proudly built for the Odoo Hackathon 2025*
 
+[![Watch Demo](https://img.youtube.com/vi/F_169x9_Ar4/0.jpg)](https://www.youtube.com/watch?v=F_169x9_Ar4)
+
+> 🎥 **Watch our Hackathon Demo Video** — click the thumbnail above or [watch on YouTube](https://www.youtube.com/watch?v=F_169x9_Ar4)
+
 Welcome to **StackIT** — your clean, community-driven hub for asking questions, sharing answers, and growing together.  
 No clutter, no distractions, just the joy of collaborative learning.  
 Inspired by the best of Stack Overflow, built for communities who want less noise and more knowledge.
