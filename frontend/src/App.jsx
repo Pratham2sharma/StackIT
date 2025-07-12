@@ -1,3 +1,5 @@
+import { Route } from 'react-router-dom'
+import { Router } from "express"
 
 
 
@@ -5,9 +7,12 @@ function App() {
  
 
   return (
-    <>
-      <div className='text-3xl font-bold text-red-500'>Hello World</div>
-    </>
+    <div>
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </div>
   )
 }
 
