@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
+import useQuestionStore from '../store/questionStore';
 
 const Navbar = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -10,6 +11,7 @@ const Navbar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   
   const { user, logout } = useAuthStore();
+  const { setSearchQuery } = useQuestionStore();
   const navigate = useNavigate();
   const isLoggedIn = !!user;
 
@@ -25,6 +27,14 @@ const Navbar = () => {
     await logout();
     setShowUserMenu(false);
     navigate('/');
+  };
+  
+  const handleSearch = (value) => {
+    setSearchValue(value);
+    setSearchQuery(value);
+    if (value && window.location.pathname !== '/questions') {
+      navigate('/questions');
+    }
   };
 
   return (
@@ -54,7 +64,7 @@ const Navbar = () => {
               type="text"
               placeholder="Search questions..."
               value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
               className="w-full bg-[#2C2C2E] text-white placeholder-[#8E8E93] border border-[#3A3A3C] rounded-lg px-4 py-2.5 pl-10 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-[#FF6B35] focus:bg-[#1C1C1E] transition-all duration-200"
             />
             <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8E8E93]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,7 +107,7 @@ const Navbar = () => {
                 type="text"
                 placeholder="Search questions..."
                 value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="w-full bg-[#2C2C2E] text-white placeholder-[#8E8E93] border border-[#3A3A3C] rounded-lg px-4 py-2 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-[#FF6B35] focus:bg-[#1C1C1E] transition-all duration-200"
                 autoFocus
               />

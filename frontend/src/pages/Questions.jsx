@@ -13,7 +13,7 @@ const Questions = () => {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [newQuestion, setNewQuestion] = useState({ title: '', description: '', tags: '' })
   
-  const { questions, getQuestions, createQuestion, upvoteQuestion, downvoteQuestion, isLoading, error } = useQuestionStore()
+  const { questions, searchQuery, getQuestions, createQuestion, upvoteQuestion, downvoteQuestion, isLoading, error } = useQuestionStore()
   const { user } = useAuthStore()
 
   const mockQuestions = [
@@ -147,6 +147,12 @@ const Questions = () => {
   }
 
   const filteredQuestions = questions.filter(q => {
+    // Search filter
+    const matchesSearch = !searchQuery || 
+      q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+    
     const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => q.tags.includes(tag))
     let matchesFilter = true
     
@@ -175,7 +181,7 @@ const Questions = () => {
         matchesFilter = true
     }
     
-    return matchesTags && matchesFilter
+    return matchesSearch && matchesTags && matchesFilter
   })
 
   const sortedQuestions = [...filteredQuestions].sort((a, b) => {
@@ -234,6 +240,11 @@ const Questions = () => {
                 <h2 className="text-lg md:text-xl font-semibold text-white flex items-center gap-2">
                   <MessageSquare className="text-[#007AFF] w-4 h-4 md:w-5 md:h-5" />
                   {sortedQuestions.length} Questions
+                  {searchQuery && (
+                    <span className="text-sm text-[#8E8E93] font-normal">
+                      for "{searchQuery}"
+                    </span>
+                  )}
                 </h2>
                 {user && (
                   <button

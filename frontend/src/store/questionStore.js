@@ -6,6 +6,7 @@ const API_URL = 'http://localhost:5000/api/quesans';
 const useQuestionStore = create((set, get) => ({
   questions: [],
   currentQuestion: null,
+  searchQuery: '',
   isLoading: false,
   error: null,
 
@@ -119,6 +120,9 @@ const useQuestionStore = create((set, get) => ({
       return { success: false, error: errorMessage };
     }
   },
+
+  // Set search query
+  setSearchQuery: (query) => set({ searchQuery: query }),
 
   // Clear error
   clearError: () => set({ error: null }),
