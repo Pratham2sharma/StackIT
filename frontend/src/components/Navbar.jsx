@@ -55,6 +55,11 @@ const Navbar = () => {
           <Link to="/tags" className="text-[#8E8E93] hover:text-white hover:bg-[#2C2C2E] px-3 py-2 rounded-md font-medium transition-all duration-200">
             Tags
           </Link>
+          {user?.role === 'admin' && (
+            <Link to="/admin" className="text-[#8E8E93] hover:text-white hover:bg-[#2C2C2E] px-3 py-2 rounded-md font-medium transition-all duration-200">
+              Admin Panel
+            </Link>
+          )}
         </nav>
 
         {/* Search Bar - Desktop */}
@@ -202,6 +207,11 @@ const Navbar = () => {
             <Link to="/tags" className="block text-[#8E8E93] hover:text-white hover:bg-[#2C2C2E] px-3 py-2 rounded-md font-medium transition-all duration-200">
               Tags
             </Link>
+            {user?.role === 'admin' && (
+              <Link to="/admin" className="block text-[#8E8E93] hover:text-white hover:bg-[#2C2C2E] px-3 py-2 rounded-md font-medium transition-all duration-200">
+                Admin Panel
+              </Link>
+            )}
             {isLoggedIn ? (
               <button onClick={handleLogout} className="block w-full text-left text-[#FF6B35] hover:text-white hover:bg-[#2C2C2E] px-3 py-2 rounded-md font-medium transition-all duration-200">
                 Logout
