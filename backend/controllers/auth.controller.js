@@ -4,15 +4,13 @@ import jwt from "jsonwebtoken";
 import client from "../lib/redis.js";
 
 const generateToken = (userId) => {
-    console.log('Generating token for userId:', userId);
     const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "15m",
+        expiresIn: "24h",
     })
 
     const refreshToken = jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: "7d",
     })
-    console.log('Generated accessToken:', accessToken);
     return { accessToken, refreshToken }
 }
 
