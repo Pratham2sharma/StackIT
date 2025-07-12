@@ -30,7 +30,13 @@ const userSchema = mongoose.Schema({
   isBanned: {
     type: Boolean,
     default: false
-  }
+  },
+
+  // Voting tracking
+  upvotedQuestions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
+  downvotedQuestions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
+  upvotedAnswers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }],
+  downvotedAnswers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }]
 
 }, {
   timestamps: true

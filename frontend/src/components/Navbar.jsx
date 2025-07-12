@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import useQuestionStore from '../store/questionStore';
+import useNotificationStore from '../store/notificationStore';
 
 const Navbar = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -12,15 +13,29 @@ const Navbar = () => {
   
   const { user, logout } = useAuthStore();
   const { setSearchQuery } = useQuestionStore();
+  const { notifications, unreadCount, getNotifications, markAsRead, markAllAsRead } = useNotificationStore();
   const navigate = useNavigate();
   const isLoggedIn = !!user;
+  
+  // Fetch notifications when user logs in
+  React.useEffect(() => {
+    if (user) {
+      getNotifications();
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(getNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, getNotifications]);
 
-  const notifications = [
-    { id: 1, text: 'Your question received a new answer', time: '2 min ago', unread: true },
-    { id: 2, text: 'Someone mentioned you in a comment', time: '1 hour ago', unread: true },
-    { id: 3, text: 'Your answer was accepted', time: '3 hours ago', unread: false }
-  ];
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const handleNotificationClick = async (notification) => {
+    if (!notification.isRead) {
+      await markAsRead(notification._id);
+    }
+    if (notification.question) {
+      navigate(`/questions/${notification.question._id}`);
+    }
+    setShowNotifications(false);
+  };
 
   const toggleUserMenu = () => setShowUserMenu(!showUserMenu);
   const handleLogout = async () => {
@@ -148,16 +163,41 @@ const Navbar = () => {
                 </button>
                 {showNotifications && (
                   <div className="absolute top-full right-0 mt-2 bg-[#1C1C1E] border border-[#3A3A3C] rounded-lg shadow-2xl w-80 z-50 overflow-hidden">
-                    <div className="px-4 py-4 bg-[#2C2C2E] border-b border-[#3A3A3C]">
+                    <div className="px-4 py-4 bg-[#2C2C2E] border-b border-[#3A3A3C] flex justify-between items-center">
                       <h4 className="text-white font-semibold m-0">Notifications</h4>
+                      {unreadCount > 0 && (
+                        <button 
+                          onClick={markAllAsRead}
+                          className="text-[#007AFF] text-xs hover:underline"
+                        >
+                          Mark all read
+                        </button>
+                      )}
                     </div>
                     <div className="max-h-72 overflow-y-auto">
-                      {notifications.map(notification => (
-                        <div key={notification.id} className={`px-4 py-3 border-b border-[#3A3A3C] cursor-pointer hover:bg-[#2C2C2E] transition-colors last:border-b-0 ${notification.unread ? 'bg-[#FF6B35]/5 border-l-4 border-l-[#FF6B35]' : ''}`}>
-                          <p className="text-white text-sm mb-1 leading-5">{notification.text}</p>
-                          <span className="text-[#8E8E93] text-xs">{notification.time}</span>
+                      {notifications.length > 0 ? notifications.map(notification => (
+                        <div 
+                          key={notification._id} 
+                          onClick={() => handleNotificationClick(notification)}
+                          className={`px-4 py-3 border-b border-[#3A3A3C] cursor-pointer hover:bg-[#2C2C2E] transition-colors last:border-b-0 ${
+                            !notification.isRead ? 'bg-[#FF6B35]/5 border-l-4 border-l-[#FF6B35]' : ''
+                          }`}
+                        >
+                          <p className="text-white text-sm mb-1 leading-5">{notification.message}</p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-[#8E8E93] text-xs">
+                              {new Date(notification.createdAt).toLocaleDateString()}
+                            </span>
+                            {!notification.isRead && (
+                              <span className="w-2 h-2 bg-[#FF6B35] rounded-full"></span>
+                            )}
+                          </div>
                         </div>
-                      ))}
+                      )) : (
+                        <div className="px-4 py-8 text-center text-[#8E8E93]">
+                          No notifications yet
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

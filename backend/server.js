@@ -6,6 +6,7 @@ import authRoutes from "./auth/auth.routes.js";
 import { connectDB } from "./lib/db.js";
 import quesansRoutes from "./auth/quesans.routes.js";
 import adminRoutes from "./auth/admin.routes.js";
+import notificationRoutes from "./auth/notification.routes.js";
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ const PORT = process.env.PORT || 5000;
 app.use("/api/auth", authRoutes);
 app.use("/api/quesans", quesansRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 
 

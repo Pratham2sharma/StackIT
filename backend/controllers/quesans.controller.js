@@ -1,6 +1,7 @@
 import Question from '../model/question.model.js';
 import Answer from '../model/answer.model.js';
 import User from '../model/user.model.js';
+import { createNotification } from './notification.controller.js';
 
 // POST /question
 export const createQuestion = async (req, res) => {
@@ -63,6 +64,17 @@ export const createAnswer = async (req, res) => {
     await answer.save();
     question.answers.push(answer._id);
     await question.save();
+    
+    // Create notification for question author
+    await createNotification(
+      question.author,
+      req.user._id,
+      'answer',
+      `${req.user.name} answered your question: "${question.title}"`,
+      question._id,
+      answer._id
+    );
+    
     res.status(201).json({ message: 'Answer created successfully' });
   } catch (error) {
     console.log(error);
@@ -130,7 +142,6 @@ export const getAnswer = async (req, res) => {
 };
 
 // PUT /questions/:id/upvote
-// PUT /questions/:id/upvote
 export const upvoteQuestion = async (req, res) => {
   try {
     const { id } = req.params;
@@ -139,14 +150,26 @@ export const upvoteQuestion = async (req, res) => {
       return res.status(404).json({ message: 'Question not found' });
     }
     const user = await User.findById(req.user._id);
+    
+    // Check if already upvoted
     if (user.upvotedQuestions.includes(question._id)) {
-      return res.status(400).json({ message: 'You have already upvoted this question' });
+      // Remove upvote
+      question.votes.upvotes.pull(user._id);
+      user.upvotedQuestions.pull(question._id);
+    } else {
+      // Remove downvote if exists
+      if (user.downvotedQuestions.includes(question._id)) {
+        question.votes.downvotes.pull(user._id);
+        user.downvotedQuestions.pull(question._id);
+      }
+      // Add upvote
+      question.votes.upvotes.push(user._id);
+      user.upvotedQuestions.push(question._id);
     }
-    question.votes.upvotes.push(user._id);
-    user.upvotedQuestions.push(question._id);
+    
     await question.save();
     await user.save();
-    res.json({ message: 'Question upvoted successfully' });
+    res.json({ message: 'Vote updated successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error upvoting question' });
@@ -163,14 +186,26 @@ export const downvoteQuestion = async (req, res) => {
       return res.status(404).json({ message: 'Question not found' });
     }
     const user = await User.findById(req.user._id);
+    
+    // Check if already downvoted
     if (user.downvotedQuestions.includes(question._id)) {
-      return res.status(400).json({ message: 'You have already downvoted this question' });
+      // Remove downvote
+      question.votes.downvotes.pull(user._id);
+      user.downvotedQuestions.pull(question._id);
+    } else {
+      // Remove upvote if exists
+      if (user.upvotedQuestions.includes(question._id)) {
+        question.votes.upvotes.pull(user._id);
+        user.upvotedQuestions.pull(question._id);
+      }
+      // Add downvote
+      question.votes.downvotes.push(user._id);
+      user.downvotedQuestions.push(question._id);
     }
-    question.votes.downvotes.push(user._id);
-    user.downvotedQuestions.push(question._id);
+    
     await question.save();
     await user.save();
-    res.json({ message: 'Question downvoted successfully' });
+    res.json({ message: 'Vote updated successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error downvoting question' });
@@ -186,14 +221,26 @@ export const upvoteAnswer = async (req, res) => {
       return res.status(404).json({ message: 'Answer not found' });
     }
     const user = await User.findById(req.user._id);
+    
+    // Check if already upvoted
     if (user.upvotedAnswers.includes(answer._id)) {
-      return res.status(400).json({ message: 'You have already upvoted this answer' });
+      // Remove upvote
+      answer.votes.upvotes.pull(user._id);
+      user.upvotedAnswers.pull(answer._id);
+    } else {
+      // Remove downvote if exists
+      if (user.downvotedAnswers.includes(answer._id)) {
+        answer.votes.downvotes.pull(user._id);
+        user.downvotedAnswers.pull(answer._id);
+      }
+      // Add upvote
+      answer.votes.upvotes.push(user._id);
+      user.upvotedAnswers.push(answer._id);
     }
-    answer.votes.upvotes.push(user._id);
-    user.upvotedAnswers.push(answer._id);
+    
     await answer.save();
     await user.save();
-    res.json({ message: 'Answer upvoted successfully' });
+    res.json({ message: 'Vote updated successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error upvoting answer' });
@@ -209,14 +256,26 @@ export const downvoteAnswer = async (req, res) => {
       return res.status(404).json({ message: 'Answer not found' });
     }
     const user = await User.findById(req.user._id);
+    
+    // Check if already downvoted
     if (user.downvotedAnswers.includes(answer._id)) {
-      return res.status(400).json({ message: 'You have already downvoted this answer' });
+      // Remove downvote
+      answer.votes.downvotes.pull(user._id);
+      user.downvotedAnswers.pull(answer._id);
+    } else {
+      // Remove upvote if exists
+      if (user.upvotedAnswers.includes(answer._id)) {
+        answer.votes.upvotes.pull(user._id);
+        user.upvotedAnswers.pull(answer._id);
+      }
+      // Add downvote
+      answer.votes.downvotes.push(user._id);
+      user.downvotedAnswers.push(answer._id);
     }
-    answer.votes.downvotes.push(user._id);
-    user.downvotedAnswers.push(answer._id);
+    
     await answer.save();
     await user.save();
-    res.json({ message: 'Answer downvoted successfully' });
+    res.json({ message: 'Vote updated successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error downvoting answer' });
