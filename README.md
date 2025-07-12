@@ -84,7 +84,7 @@ Whether you're a student, developer, or lifelong learner, StackIT helps you find
       <a href="mailto:mohibsolanki@gmail.com">mohibsolanki@gmail.com</a>
     </td>
     <td align="center">
-      <a href="https://github.com/P47Parzival">
+      <a href="https://github.com/Dhruv-Mali">
         <img src="https://avatars.githubusercontent.com/u/109059409?v=4" width="80"/><br/>
         <b>Dhruv Mali</b>
       </a><br/>
