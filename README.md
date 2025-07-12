@@ -110,6 +110,12 @@ Whether you're a student, developer, or lifelong learner, StackIT helps you find
    `npm run dev`
 ---
 
+## 🏁 Admin Panel Credential
+
+1. just login with Admin credentials then press Admin Panel button in Navbar.
+2. Email: admin@example.com
+3. Password: 123456
+
 ## 🏁 Built for the Odoo Hackathon 2025
 
 We're proud to participate in the Odoo Hackathon — a place to create, collaborate, and showcase innovation.  
