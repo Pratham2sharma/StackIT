@@ -108,6 +108,8 @@ Whether you're a student, developer, or lifelong learner, StackIT helps you find
 
 4. **For Back-end -> Go to Root Directory and Run**
    `npm run dev`
+
+5. **Make Sure Frontend should run on PORT - 5173**   
 ---
 
 ## 🏁 Admin Panel Credential
