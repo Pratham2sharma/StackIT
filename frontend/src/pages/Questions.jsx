@@ -8,7 +8,8 @@ const Questions = () => {
   const [sortBy, setSortBy] = useState('newest')
   const [filterBy, setFilterBy] = useState('all')
   const [isLoaded, setIsLoaded] = useState(false)
-  const [visibleQuestions, setVisibleQuestions] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
+  const questionsPerPage = 5
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [newQuestion, setNewQuestion] = useState({ title: '', description: '', tags: '' })
@@ -91,11 +92,8 @@ const Questions = () => {
     setIsLoaded(true)
     getQuestions()
     
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
-        setVisibleQuestions(prev => Math.min(prev + 10, questions.length))
-      }
-    }
+    // Reset to first page when questions change
+    setCurrentPage(1)
 
     const handleClickOutside = (event) => {
       if (showFilterDropdown && !event.target.closest('.filter-dropdown')) {
@@ -103,10 +101,8 @@ const Questions = () => {
       }
     }
 
-    window.addEventListener('scroll', handleScroll)
     document.addEventListener('click', handleClickOutside)
     return () => {
-      window.removeEventListener('scroll', handleScroll)
       document.removeEventListener('click', handleClickOutside)
     }
   }, [showFilterDropdown])
@@ -198,6 +194,12 @@ const Questions = () => {
         return 0
     }
   })
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedQuestions.length / questionsPerPage)
+  const startIndex = (currentPage - 1) * questionsPerPage
+  const endIndex = startIndex + questionsPerPage
+  const currentQuestions = sortedQuestions.slice(startIndex, endIndex)
 
   return (
     <div className="min-h-screen bg-[#0C0C0C] pt-4 md:pt-6">
@@ -470,7 +472,7 @@ const Questions = () => {
 
             {/* Questions List */}
             <div className="space-y-3 md:space-y-4">
-              {sortedQuestions.slice(0, visibleQuestions).map((question, index) => {
+              {currentQuestions.map((question, index) => {
                 const upvotes = question.votes?.upvotes?.length || 0
                 const downvotes = question.votes?.downvotes?.length || 0
                 const totalVotes = upvotes - downvotes
@@ -562,13 +564,39 @@ const Questions = () => {
               </div>
             )}
             
-            {visibleQuestions < sortedQuestions.length && (
-              <div className="text-center py-8">
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 py-8">
                 <button 
-                  onClick={() => setVisibleQuestions(prev => prev + 10)}
-                  className="bg-[#007AFF] hover:bg-[#0056CC] text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-[#2C2C2E] text-white rounded-lg hover:bg-[#3C3C3E] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  Load More Questions
+                  Previous
+                </button>
+                
+                <div className="flex gap-1">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-3 py-2 rounded-lg transition-colors ${
+                        currentPage === i + 1
+                          ? 'bg-[#007AFF] text-white'
+                          : 'bg-[#2C2C2E] text-[#8E8E93] hover:bg-[#3C3C3E] hover:text-white'
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-[#2C2C2E] text-white rounded-lg hover:bg-[#3C3C3E] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
                 </button>
               </div>
             )}
